@@ -147,6 +147,10 @@ class _PodVideoController extends _PodUiController {
     _videoCtr?.setPlaybackSpeed(pickedSpeed);
   }
 
+  Future<void> setVideoPlayBackSpeed(double speed) async {
+    await _videoCtr?.setPlaybackSpeed(speed);
+  }
+
   Future<void> setLooping(bool isLooped) async {
     isLooping = isLooped;
     await _videoCtr?.setLooping(isLooping);
@@ -234,8 +238,7 @@ class _PodVideoController extends _PodUiController {
             tag: tag,
           ),
           reverseTransitionDuration: const Duration(milliseconds: 400),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              FadeTransition(
+          transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(
             opacity: animation,
             child: child,
           ),
@@ -248,10 +251,7 @@ class _PodVideoController extends _PodUiController {
   String calculateVideoDuration(Duration duration) {
     final totalHour = duration.inHours == 0 ? '' : '${duration.inHours}:';
     final totalMinute = duration.toString().split(':')[1];
-    final totalSeconds = (duration - Duration(minutes: duration.inMinutes))
-        .inSeconds
-        .toString()
-        .padLeft(2, '0');
+    final totalSeconds = (duration - Duration(minutes: duration.inMinutes)).inSeconds.toString().padLeft(2, '0');
     final String videoLength = '$totalHour$totalMinute:$totalSeconds';
     return videoLength;
   }
