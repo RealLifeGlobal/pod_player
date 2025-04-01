@@ -79,8 +79,14 @@ class _PodBaseController extends GetxController {
   //   );
   // }
   void _listenToVideoState() {
-    // Handle the loading state
-    if (_videoCtr!.value.isBuffering || !_videoCtr!.value.isInitialized) {
+    // Handle the uninitialized state
+    if (!_videoCtr!.value.isInitialized) {
+      podVideoStateChanger(PodVideoState.loading);
+      return;
+    }
+
+    // Handle the buffering state
+    if (!_videoCtr!.value.isPlaying && _videoCtr!.value.isBuffering) {
       podVideoStateChanger(PodVideoState.loading);
       return;
     }
