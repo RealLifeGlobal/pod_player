@@ -1,3 +1,5 @@
+import 'pod_cache_config.dart';
+
 class PodPlayerConfig {
   final bool autoPlay;
   final bool isLooping;
@@ -11,12 +13,16 @@ class PodPlayerConfig {
   /// Default value is [1080, 720, 360]
   final List<int> videoQualityPriority;
 
+  /// Configuration for video caching
+  final PodCacheConfig cacheConfig;
+
   const PodPlayerConfig({
     this.autoPlay = true,
     this.isLooping = false,
     this.forcedVideoFocus = false,
     this.wakelockEnabled = true,
     this.videoQualityPriority = const [1080, 720, 360],
+    this.cacheConfig = const PodCacheConfig(),
   });
 
   PodPlayerConfig copyWith({
@@ -25,6 +31,7 @@ class PodPlayerConfig {
     bool? forcedVideoFocus,
     bool? wakelockEnabled,
     List<int>? videoQualityPriority,
+    PodCacheConfig? cacheConfig,
   }) {
     return PodPlayerConfig(
       autoPlay: autoPlay ?? this.autoPlay,
@@ -32,6 +39,7 @@ class PodPlayerConfig {
       forcedVideoFocus: forcedVideoFocus ?? this.forcedVideoFocus,
       wakelockEnabled: wakelockEnabled ?? this.wakelockEnabled,
       videoQualityPriority: videoQualityPriority ?? this.videoQualityPriority,
+      cacheConfig: cacheConfig ?? this.cacheConfig,
     );
   }
 }

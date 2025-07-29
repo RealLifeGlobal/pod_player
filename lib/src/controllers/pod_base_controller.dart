@@ -3,7 +3,7 @@ part of 'pod_getx_video_controller.dart';
 
 class _PodBaseController extends GetxController {
   ///main video controller
-  VideoPlayerController? _videoCtr;
+  CachedVideoPlayerPlus? _videoCtr;
 
   ///
   late PodVideoPlayerType _videoPlayerType;
@@ -40,10 +40,10 @@ class _PodBaseController extends GetxController {
   ///**listners
 
   Future<void> videoListner() async {
-    if (!_videoCtr!.value.isInitialized) {
+    if (!_videoCtr!.controller.value.isInitialized) {
       await _videoCtr!.initialize();
     }
-    if (_videoCtr!.value.isInitialized) {
+    if (_videoCtr!.controller.value.isInitialized) {
       _listenToVideoState();
       _listneToVideoPosition();
       _listneToVolume();
@@ -51,10 +51,10 @@ class _PodBaseController extends GetxController {
     }
   }
 
-  void _webAutoPlay() => _videoCtr!.setVolume(1);
+  void _webAutoPlay() => _videoCtr!.controller.setVolume(1);
 
   void _listneToVolume() {
-    if (_videoCtr!.value.volume == 0) {
+    if (_videoCtr!.controller.value.volume == 0) {
       if (!isMute) {
         isMute = true;
         update(['volume']);
@@ -68,7 +68,7 @@ class _PodBaseController extends GetxController {
       }
     }
   }
-
+  
   // void _listneToVideoState() {
   //   podVideoStateChanger(
   //     _videoCtr!.value.isBuffering || !_videoCtr!.value.isInitialized
@@ -80,19 +80,19 @@ class _PodBaseController extends GetxController {
   // }
   void _listenToVideoState() {
     // Handle the uninitialized state
-    if (!_videoCtr!.value.isInitialized) {
+    if (!_videoCtr!.controller.value.isInitialized) {
       podVideoStateChanger(PodVideoState.loading);
       return;
     }
 
     // Handle the buffering state
-    if (!_videoCtr!.value.isPlaying && _videoCtr!.value.isBuffering) {
+    if (!_videoCtr!.controller.value.isPlaying && _videoCtr!.controller.value.isBuffering) {
       podVideoStateChanger(PodVideoState.loading);
       return;
     }
 
     // Handle the playing and paused states
-    if (_videoCtr!.value.isPlaying) {
+    if (_videoCtr!.controller.value.isPlaying) {
       podVideoStateChanger(PodVideoState.playing);
     } else {
       // Ensure that the video is really paused
@@ -100,7 +100,7 @@ class _PodBaseController extends GetxController {
       // If we update the Pod Video state to paused right away, the player UI enters in a play/pause loop
       Future<void>.delayed(const Duration(milliseconds: 200)).then((value) {
         // If after a small delay the video is still paused, then we update the Pod Video state
-        if (!_videoCtr!.value.isPlaying) {
+        if (!_videoCtr!.controller.value.isPlaying) {
           podVideoStateChanger(PodVideoState.paused);
         }
       });
@@ -117,15 +117,15 @@ class _PodBaseController extends GetxController {
       }
     }
   }
-
+  
   void _listneToVideoPosition() {
-    if ((_videoCtr?.value.duration.inSeconds ?? Duration.zero.inSeconds) < 60) {
-      _videoPosition = _videoCtr?.value.position ?? Duration.zero;
+    if ((_videoCtr?.controller.value.duration.inSeconds ?? Duration.zero.inSeconds) < 60) {
+      _videoPosition = _videoCtr?.controller.value.position ?? Duration.zero;
       update(['video-progress']);
       update(['update-all']);
     } else {
-      if (_videoPosition.inSeconds != (_videoCtr?.value.position ?? Duration.zero).inSeconds) {
-        _videoPosition = _videoCtr?.value.position ?? Duration.zero;
+      if (_videoPosition.inSeconds != (_videoCtr?.controller.value.position ?? Duration.zero).inSeconds) {
+        _videoPosition = _videoCtr?.controller.value.position ?? Duration.zero;
         update(['video-progress']);
         update(['update-all']);
       }

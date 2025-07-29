@@ -20,7 +20,7 @@ part 'pod_video_quality_controller.dart';
 
 class PodGetXVideoController extends _PodGesturesController {
   ///main videoplayer controller
-  VideoPlayerController? get videoCtr => _videoCtr;
+  CachedVideoPlayerPlus? get videoCtr => _videoCtr;
 
   ///podVideoPlayer state notifier
   PodVideoState get podVideoState => _podVideoState;
@@ -58,9 +58,9 @@ class PodGetXVideoController extends _PodGesturesController {
     try {
       await _initializePlayer();
       await _videoCtr?.initialize();
-      _videoDuration = _videoCtr?.value.duration ?? Duration.zero;
+      _videoDuration = _videoCtr?.controller.value.duration ?? Duration.zero;
       await setLooping(isLooping);
-      _videoCtr?.addListener(videoListner);
+      _videoCtr?.controller.addListener(videoListner);
       addListenerId('podVideoState', podStateListner);
 
       checkAutoPlayVideo();
@@ -69,8 +69,7 @@ class PodGetXVideoController extends _PodGesturesController {
 
       update(['update-all']);
       // ignore: unawaited_futures
-      Future<void>.delayed(const Duration(milliseconds: 600))
-          .then((_) => _isWebAutoPlayDone = true);
+      Future<void>.delayed(const Duration(milliseconds: 600)).then((_) => _isWebAutoPlayDone = true);
     } catch (e) {
       podVideoStateChanger(PodVideoState.error);
       update(['errorState']);
@@ -83,14 +82,22 @@ class PodGetXVideoController extends _PodGesturesController {
   Future<void> _initializePlayer() async {
     switch (_videoPlayerType) {
       case PodVideoPlayerType.network:
+        // Prepare HTTP headers with Web caching support
+        final httpHeaders = _prepareHttpHeaders(
+          playVideoFrom.httpHeaders,
+          podPlayerConfig.cacheConfig,
+        );
 
         ///
-        _videoCtr = VideoPlayerController.networkUrl(
+        _videoCtr = CachedVideoPlayerPlus.networkUrl(
           Uri.parse(playVideoFrom.dataSource!),
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
-          httpHeaders: playVideoFrom.httpHeaders,
+          httpHeaders: httpHeaders,
+          invalidateCacheIfOlderThan: podPlayerConfig.cacheConfig.enableCache
+              ? podPlayerConfig.cacheConfig.cacheDuration
+              : const Duration(hours: 24),
         );
         playingVideoUrl = playVideoFrom.dataSource;
         break;
@@ -100,17 +107,24 @@ class PodGetXVideoController extends _PodGesturesController {
           videoUrls: playVideoFrom.videoQualityUrls!,
         );
 
+        // Prepare HTTP headers with Web caching support
+        final httpHeaders = _prepareHttpHeaders(
+          playVideoFrom.httpHeaders,
+          podPlayerConfig.cacheConfig,
+        );
+
         ///
-        _videoCtr = VideoPlayerController.networkUrl(
+        _videoCtr = CachedVideoPlayerPlus.networkUrl(
           Uri.parse(url),
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
-          httpHeaders: playVideoFrom.httpHeaders,
+          httpHeaders: httpHeaders,
+          invalidateCacheIfOlderThan: podPlayerConfig.cacheConfig.enableCache
+              ? podPlayerConfig.cacheConfig.cacheDuration
+              : const Duration(hours: 24),
         );
         playingVideoUrl = url;
-
-        break;
       case PodVideoPlayerType.youtube:
         final urls = await getVideoQualityUrlsFromYoutube(
           playVideoFrom.dataSource!,
@@ -121,13 +135,22 @@ class PodGetXVideoController extends _PodGesturesController {
           videoUrls: urls,
         );
 
+        // Prepare HTTP headers with Web caching support
+        final httpHeaders = _prepareHttpHeaders(
+          playVideoFrom.httpHeaders,
+          podPlayerConfig.cacheConfig,
+        );
+
         ///
-        _videoCtr = VideoPlayerController.networkUrl(
+        _videoCtr = CachedVideoPlayerPlus.networkUrl(
           Uri.parse(url),
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
-          httpHeaders: playVideoFrom.httpHeaders,
+          httpHeaders: httpHeaders,
+          invalidateCacheIfOlderThan: podPlayerConfig.cacheConfig.enableCache
+              ? podPlayerConfig.cacheConfig.cacheDuration
+              : const Duration(hours: 24),
         );
         playingVideoUrl = url;
 
@@ -142,12 +165,21 @@ class PodGetXVideoController extends _PodGesturesController {
           videoUrls: vimeoOrVideoUrls,
         );
 
-        _videoCtr = VideoPlayerController.networkUrl(
+        // Prepare HTTP headers with Web caching support
+        final httpHeaders = _prepareHttpHeaders(
+          playVideoFrom.httpHeaders,
+          podPlayerConfig.cacheConfig,
+        );
+
+        _videoCtr = CachedVideoPlayerPlus.networkUrl(
           Uri.parse(url),
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
-          httpHeaders: playVideoFrom.httpHeaders,
+          httpHeaders: httpHeaders,
+          invalidateCacheIfOlderThan: podPlayerConfig.cacheConfig.enableCache
+              ? podPlayerConfig.cacheConfig.cacheDuration
+              : const Duration(hours: 24),
         );
         playingVideoUrl = url;
 
@@ -155,7 +187,7 @@ class PodGetXVideoController extends _PodGesturesController {
       case PodVideoPlayerType.asset:
 
         ///
-        _videoCtr = VideoPlayerController.asset(
+        _videoCtr = CachedVideoPlayerPlus.asset(
           playVideoFrom.dataSource!,
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           package: playVideoFrom.package,
@@ -170,7 +202,7 @@ class PodGetXVideoController extends _PodGesturesController {
         }
 
         ///
-        _videoCtr = VideoPlayerController.file(
+        _videoCtr = CachedVideoPlayerPlus.file(
           playVideoFrom.file!,
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
@@ -187,12 +219,21 @@ class PodGetXVideoController extends _PodGesturesController {
           videoUrls: vimeoOrVideoUrls,
         );
 
-        _videoCtr = VideoPlayerController.networkUrl(
+        // Prepare HTTP headers with Web caching support
+        final httpHeaders = _prepareHttpHeaders(
+          playVideoFrom.httpHeaders,
+          podPlayerConfig.cacheConfig,
+        );
+
+        _videoCtr = CachedVideoPlayerPlus.networkUrl(
           Uri.parse(url),
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
-          httpHeaders: playVideoFrom.httpHeaders,
+          httpHeaders: httpHeaders,
+          invalidateCacheIfOlderThan: podPlayerConfig.cacheConfig.enableCache
+              ? podPlayerConfig.cacheConfig.cacheDuration
+              : const Duration(hours: 24),
         );
         playingVideoUrl = url;
 
@@ -223,8 +264,7 @@ class PodGetXVideoController extends _PodGesturesController {
         onRightDoubleTap();
         return;
       }
-      if (event.isKeyPressed(LogicalKeyboardKey.keyF) &&
-          event.logicalKey.keyLabel == 'F') {
+      if (event.isKeyPressed(LogicalKeyboardKey.keyF) && event.logicalKey.keyLabel == 'F') {
         toggleFullScreenOnWeb(appContext, tag);
       }
       if (event.isKeyPressed(LogicalKeyboardKey.escape)) {
@@ -278,7 +318,7 @@ class PodGetXVideoController extends _PodGesturesController {
   void checkAutoPlayVideo() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (autoPlay && (isVideoUiBinded ?? false)) {
-        if (kIsWeb) await _videoCtr?.setVolume(0);
+        if (kIsWeb) await _videoCtr?.controller.setVolume(0);
         podVideoStateChanger(PodVideoState.playing);
       } else {
         podVideoStateChanger(PodVideoState.paused);
@@ -290,7 +330,7 @@ class PodGetXVideoController extends _PodGesturesController {
     required PlayVideoFrom playVideoFrom,
     required PodPlayerConfig playerConfig,
   }) async {
-    _videoCtr?.removeListener(videoListner);
+    _videoCtr?.controller.removeListener(videoListner);
     podVideoStateChanger(PodVideoState.paused);
     podVideoStateChanger(PodVideoState.loading);
     keyboardFocusWeb?.removeListener(keyboadListner);
@@ -301,5 +341,14 @@ class PodGetXVideoController extends _PodGesturesController {
     keyboardFocusWeb?.requestFocus();
     keyboardFocusWeb?.addListener(keyboadListner);
     await videoInit();
+  }
+
+  /// Helper method to prepare HTTP headers with Web caching support
+  Map<String, String> _prepareHttpHeaders(
+    Map<String, String> originalHeaders,
+    PodCacheConfig cacheConfig,
+  ) {
+    // Use the cache config's getWebHeaders method to handle Web caching
+    return cacheConfig.getWebHeaders(originalHeaders);
   }
 }
