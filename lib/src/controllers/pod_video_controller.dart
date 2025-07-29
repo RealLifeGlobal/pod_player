@@ -151,6 +151,10 @@ class _PodVideoController extends _PodUiController {
     await _videoCtr?.controller.setPlaybackSpeed(speed);
   }
 
+  Future<void> setVideoPlayBackSpeed(double speed) async {
+    await _videoCtr?.setPlaybackSpeed(speed);
+  }
+
   Future<void> setLooping(bool isLooped) async {
     isLooping = isLooped;
     await _videoCtr?.controller.setLooping(isLooping);
