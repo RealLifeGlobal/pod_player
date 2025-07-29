@@ -123,15 +123,18 @@ class _PodVideoQualityController extends _PodVideoController {
           .url;
       podLog(_videoQualityUrl);
       vimeoPlayingVideoQuality = quality;
-      _videoCtr?.removeListener(videoListner);
+      _videoCtr?.controller.removeListener(videoListner);
       podVideoStateChanger(PodVideoState.paused);
       podVideoStateChanger(PodVideoState.loading);
       playingVideoUrl = _videoQualityUrl;
-      _videoCtr = VideoPlayerController.networkUrl(Uri.parse(_videoQualityUrl));
-      await _videoCtr?.initialize();
-      _videoDuration = _videoCtr?.value.duration ?? Duration.zero;
-      _videoCtr?.addListener(videoListner);
-      await _videoCtr?.seekTo(_videoPosition);
+      _videoCtr = CachedVideoPlayerPlus.networkUrl(
+        Uri.parse(_videoQualityUrl),
+        invalidateCacheIfOlderThan: const Duration(days: 7),
+      );
+      await _videoCtr?.controller.initialize();
+      _videoDuration = _videoCtr?.controller.value.duration ?? Duration.zero;
+      _videoCtr?.controller.addListener(videoListner);
+      await _videoCtr?.controller.seekTo(_videoPosition);
       setVideoPlayBack(_currentPaybackSpeed);
       podVideoStateChanger(PodVideoState.playing);
       onVimeoVideoQualityChanged?.call();

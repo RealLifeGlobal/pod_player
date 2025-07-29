@@ -25,17 +25,17 @@ class _PodVideoController extends _PodUiController {
   ///*seek video
   /// Seek video to a duration.
   Future<void> seekTo(Duration moment) async {
-    await _videoCtr!.seekTo(moment);
+    await _videoCtr!.controller.seekTo(moment);
   }
 
   /// Seek video forward by the duration.
   Future<void> seekForward(Duration videoSeekDuration) async {
-    await seekTo(_videoCtr!.value.position + videoSeekDuration);
+    await seekTo(_videoCtr!.controller.value.position + videoSeekDuration);
   }
 
   /// Seek video backward by the duration.
   Future<void> seekBackward(Duration videoSeekDuration) async {
-    await seekTo(_videoCtr!.value.position - videoSeekDuration);
+    await seekTo(_videoCtr!.controller.value.position - videoSeekDuration);
   }
 
   ///mute
@@ -66,7 +66,7 @@ class _PodVideoController extends _PodUiController {
   Future<void> setVolume(
     double volume,
   ) async {
-    await _videoCtr?.setVolume(volume);
+    await _videoCtr?.controller.setVolume(volume);
     if (volume <= 0) {
       isMute = true;
     } else {
@@ -82,12 +82,12 @@ class _PodVideoController extends _PodUiController {
     if (isvideoPlaying) {
       isShowOverlay(true);
       // ignore: unawaited_futures
-      _videoCtr?.play();
+      _videoCtr?.controller.play();
       isShowOverlay(false, delay: const Duration(seconds: 1));
     } else {
       isShowOverlay(true);
       // ignore: unawaited_futures
-      _videoCtr?.pause();
+      _videoCtr?.controller.pause();
     }
   }
 
@@ -144,21 +144,21 @@ class _PodVideoController extends _PodUiController {
       pickedSpeed = double.parse(speed.split('x').first);
       _currentPaybackSpeed = speed;
     }
-    _videoCtr?.setPlaybackSpeed(pickedSpeed);
+    _videoCtr?.controller.setPlaybackSpeed(pickedSpeed);
   }
 
   Future<void> setVideoPlayBackAsDouble(double speed) async {
-    await _videoCtr?.setPlaybackSpeed(speed);
+    await _videoCtr?.controller.setPlaybackSpeed(speed);
   }
 
   Future<void> setLooping(bool isLooped) async {
     isLooping = isLooped;
-    await _videoCtr?.setLooping(isLooping);
+    await _videoCtr?.controller.setLooping(isLooping);
   }
 
   Future<void> toggleLooping() async {
     isLooping = !isLooping;
-    await _videoCtr?.setLooping(isLooping);
+    await _videoCtr?.controller.setLooping(isLooping);
     update();
     update(['update-all']);
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
+import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../controllers/pod_getx_video_controller.dart';
@@ -32,7 +33,7 @@ class PodProgressBar extends StatefulWidget {
 
 class _PodProgressBarState extends State<PodProgressBar> {
   late final _podCtr = Get.find<PodGetXVideoController>(tag: widget.tag);
-  late VideoPlayerValue? videoPlayerValue = _podCtr.videoCtr?.value;
+  late VideoPlayerValue? videoPlayerValue = _podCtr.videoCtr?.controller.value;
   bool _controllerWasPlaying = false;
 
   void seekToRelativePosition(Offset globalPosition) {
@@ -54,7 +55,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
       tag: widget.tag,
       id: 'video-progress',
       builder: (podCtr) {
-        videoPlayerValue = podCtr.videoCtr?.value;
+        videoPlayerValue = podCtr.videoCtr?.controller.value;
         return LayoutBuilder(
           builder: (context, size) {
             return GestureDetector(
@@ -65,9 +66,9 @@ class _PodProgressBarState extends State<PodProgressBar> {
                   return;
                 }
                 _controllerWasPlaying =
-                    podCtr.videoCtr?.value.isPlaying ?? false;
+                    podCtr.videoCtr?.controller.value.isPlaying ?? false;
                 if (_controllerWasPlaying) {
-                  podCtr.videoCtr?.pause();
+                  podCtr.videoCtr?.controller.pause();
                 }
 
                 if (widget.onDragStart != null) {
@@ -85,7 +86,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
               },
               onHorizontalDragEnd: (DragEndDetails details) {
                 if (_controllerWasPlaying) {
-                  podCtr.videoCtr?.play();
+                  podCtr.videoCtr?.controller.play();
                 }
                 podCtr.toggleVideoOverlay();
 

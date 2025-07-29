@@ -64,12 +64,12 @@ class _FullScreenViewState extends State<FullScreenView>
                 child: Center(
                   child: podCtr.videoCtr == null
                       ? loadingWidget
-                      : podCtr.videoCtr!.value.isInitialized
+                      : podCtr.videoCtr!.controller.value.isInitialized
                           ? _PodCoreVideoPlayer(
                               tag: widget.tag,
                               videoPlayerCtr: podCtr.videoCtr!,
                               videoAspectRatio:
-                                  podCtr.videoCtr?.value.aspectRatio ?? 16 / 9,
+                                  podCtr.videoCtr?.controller.value.aspectRatio ?? 16 / 9,
                             )
                           : loadingWidget,
                 ),

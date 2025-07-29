@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
+import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../pod_player.dart';
@@ -86,16 +87,16 @@ class PodPlayerController {
   String? get videoUrl => _ctr.playingVideoUrl;
 
   /// returns true if video player is initialized
-  bool get isInitialised => _ctr.videoCtr?.value.isInitialized ?? false;
+  bool get isInitialised => _ctr.videoCtr?.controller.value.isInitialized ?? false;
 
   /// returns true if video is playing
-  bool get isVideoPlaying => _ctr.videoCtr?.value.isPlaying ?? false;
+  bool get isVideoPlaying => _ctr.videoCtr?.controller.value.isPlaying ?? false;
 
   /// returns true if video is in buffering state
-  bool get isVideoBuffering => _ctr.videoCtr?.value.isBuffering ?? false;
+  bool get isVideoBuffering => _ctr.videoCtr?.controller.value.isBuffering ?? false;
 
   /// returns true if `loop` is enabled
-  bool get isVideoLooping => _ctr.videoCtr?.value.isLooping ?? false;
+  bool get isVideoLooping => _ctr.videoCtr?.controller.value.isLooping ?? false;
 
   /// returns true if video is in fullscreen mode
   bool get isFullScreen => _ctr.isFullScreen;
@@ -104,7 +105,7 @@ class PodPlayerController {
 
   PodVideoState get videoState => _ctr.podVideoState;
 
-  VideoPlayerValue? get videoPlayerValue => _ctr.videoCtr?.value;
+  VideoPlayerValue? get videoPlayerValue => _ctr.videoCtr?.controller.value;
 
   PodVideoPlayerType get videoPlayerType => _ctr.videoPlayerType;
 
@@ -136,14 +137,14 @@ class PodPlayerController {
   /// It only adds a listener if the player is successfully initialized
   void addListener(VoidCallback listener) {
     _checkAndWaitTillInitialized().then(
-      (value) => _ctr.videoCtr?.addListener(listener),
+      (value) => _ctr.videoCtr?.controller.addListener(listener),
     );
   }
 
   /// Remove registered listeners
   void removeListener(VoidCallback listener) {
     _checkAndWaitTillInitialized().then(
-      (value) => _ctr.videoCtr?.removeListener(listener),
+      (value) => _ctr.videoCtr?.controller.removeListener(listener),
     );
   }
 
@@ -163,7 +164,7 @@ class PodPlayerController {
   ///Dispose pod video player controller
   void dispose() {
     _isCtrInitialised = false;
-    _ctr.videoCtr?.removeListener(_ctr.videoListner);
+    _ctr.videoCtr?.controller.removeListener(_ctr.videoListner);
     _ctr.videoCtr?.dispose();
     _ctr.removeListenerId('podVideoState', _ctr.podStateListner);
     if (podPlayerConfig.wakelockEnabled) WakelockPlus.disable();

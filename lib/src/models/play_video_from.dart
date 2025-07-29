@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:video_player/video_player.dart';
 import '../../pod_player.dart';
 
 class PlayVideoFrom {

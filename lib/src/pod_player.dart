@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
+import 'package:video_player/video_player.dart';
 
 import '../pod_player.dart';
 import 'controllers/pod_getx_video_controller.dart';
@@ -97,8 +98,7 @@ class PodVideoPlayer extends StatefulWidget {
   State<PodVideoPlayer> createState() => _PodVideoPlayerState();
 }
 
-class _PodVideoPlayerState extends State<PodVideoPlayer>
-    with TickerProviderStateMixin {
+class _PodVideoPlayerState extends State<PodVideoPlayer> with TickerProviderStateMixin {
   late PodGetXVideoController _podCtr;
 
   // late String tag;
@@ -182,7 +182,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
       tag: widget.controller.getTag,
       builder: (_) {
         _frameAspectRatio = widget.matchFrameAspectRatioToVideo
-            ? _podCtr.videoCtr?.value.aspectRatio ?? widget.frameAspectRatio
+            ? _podCtr.videoCtr?.controller.value.aspectRatio ?? widget.frameAspectRatio
             : widget.frameAspectRatio;
         return Center(
           child: ColoredBox(
@@ -198,7 +198,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
 
                 return AspectRatio(
                   aspectRatio: _frameAspectRatio,
-                  child: podCtr.videoCtr?.value.isInitialized ?? false
+                  child: podCtr.videoCtr?.controller.value.isInitialized ?? false
                       ? _buildPlayer()
                       : Center(child: circularProgressIndicator),
                 );
@@ -244,7 +244,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
 
   Widget _buildPlayer() {
     final videoAspectRatio = widget.matchVideoAspectRatioToFrame
-        ? _podCtr.videoCtr?.value.aspectRatio ?? widget.videoAspectRatio
+        ? _podCtr.videoCtr?.controller.value.aspectRatio ?? widget.videoAspectRatio
         : widget.videoAspectRatio;
     if (kIsWeb) {
       return GetBuilder<PodGetXVideoController>(
