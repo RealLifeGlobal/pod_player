@@ -48,3 +48,6 @@ app.*.map.json
 pubspec.lock
 .metadata
 example/assets/long_video.mkv
+
+# FVM Version Cache
+.fvm/
