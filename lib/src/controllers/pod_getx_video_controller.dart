@@ -207,6 +207,11 @@ class PodGetXVideoController extends _PodGesturesController {
     required String tag,
   }) {
     if (kIsWeb) {
+      // If keyboard shortcuts are disabled, don't handle any keyboard events
+      if (podPlayerConfig.disableKeyboardShortcuts) {
+        return;
+      }
+
       if (event.isKeyPressed(LogicalKeyboardKey.space)) {
         togglePlayPauseVideo();
         return;

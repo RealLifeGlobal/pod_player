@@ -4,6 +4,11 @@ class PodPlayerConfig {
   final bool forcedVideoFocus;
   final bool wakelockEnabled;
 
+  /// Disable keyboard shortcuts on web (Space, M, F, Esc, Arrow keys).
+  /// When true, keyboard shortcuts are disabled to prevent interference with form inputs.
+  /// Default value is true (shortcuts disabled).
+  final bool disableKeyboardShortcuts;
+
   /// Initial video quality priority. The first available option will be used,
   /// from start to the end of this list. If all options informed are not
   /// available or if nothing is provided, 360p is used.
@@ -16,6 +21,7 @@ class PodPlayerConfig {
     this.isLooping = false,
     this.forcedVideoFocus = false,
     this.wakelockEnabled = true,
+    this.disableKeyboardShortcuts = true,
     this.videoQualityPriority = const [1080, 720, 360],
   });
 
@@ -24,6 +30,7 @@ class PodPlayerConfig {
     bool? isLooping,
     bool? forcedVideoFocus,
     bool? wakelockEnabled,
+    bool? disableKeyboardShortcuts,
     List<int>? videoQualityPriority,
   }) {
     return PodPlayerConfig(
@@ -31,6 +38,7 @@ class PodPlayerConfig {
       isLooping: isLooping ?? this.isLooping,
       forcedVideoFocus: forcedVideoFocus ?? this.forcedVideoFocus,
       wakelockEnabled: wakelockEnabled ?? this.wakelockEnabled,
+      disableKeyboardShortcuts: disableKeyboardShortcuts ?? this.disableKeyboardShortcuts,
       videoQualityPriority: videoQualityPriority ?? this.videoQualityPriority,
     );
   }
