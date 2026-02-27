@@ -34,6 +34,9 @@ class _PodBaseController extends GetxController {
   int doubleTapForwardSeconds = 10;
   String? playingVideoUrl;
 
+  /// The video view type (textureView or platformView)
+  VideoViewType _videoViewType = VideoViewType.textureView;
+
   late BuildContext mainContext;
   late BuildContext fullScreenContext;
 
