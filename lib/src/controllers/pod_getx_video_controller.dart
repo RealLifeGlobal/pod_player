@@ -45,6 +45,7 @@ class PodGetXVideoController extends _PodGesturesController {
   }) {
     this.playVideoFrom = playVideoFrom;
     _videoPlayerType = playVideoFrom.playerType;
+    _videoViewType = playVideoFrom.viewType ?? VideoViewType.textureView;
     podPlayerConfig = playerConfig;
     autoPlay = playerConfig.autoPlay;
     isLooping = playerConfig.isLooping;
@@ -91,6 +92,7 @@ class PodGetXVideoController extends _PodGesturesController {
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
           httpHeaders: playVideoFrom.httpHeaders,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = playVideoFrom.dataSource;
         break;
@@ -107,6 +109,7 @@ class PodGetXVideoController extends _PodGesturesController {
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
           httpHeaders: playVideoFrom.httpHeaders,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = url;
 
@@ -128,6 +131,7 @@ class PodGetXVideoController extends _PodGesturesController {
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
           httpHeaders: playVideoFrom.httpHeaders,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = url;
 
@@ -148,6 +152,7 @@ class PodGetXVideoController extends _PodGesturesController {
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
           httpHeaders: playVideoFrom.httpHeaders,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = url;
 
@@ -160,6 +165,7 @@ class PodGetXVideoController extends _PodGesturesController {
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           package: playVideoFrom.package,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = playVideoFrom.dataSource;
 
@@ -174,6 +180,7 @@ class PodGetXVideoController extends _PodGesturesController {
           playVideoFrom.file!,
           closedCaptionFile: playVideoFrom.closedCaptionFile,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
 
         break;
@@ -193,6 +200,7 @@ class PodGetXVideoController extends _PodGesturesController {
           formatHint: playVideoFrom.formatHint,
           videoPlayerOptions: playVideoFrom.videoPlayerOptions,
           httpHeaders: playVideoFrom.httpHeaders,
+          viewType: playVideoFrom.viewType ?? VideoViewType.textureView,
         );
         playingVideoUrl = url;
 
@@ -207,6 +215,11 @@ class PodGetXVideoController extends _PodGesturesController {
     required String tag,
   }) {
     if (kIsWeb) {
+      // If keyboard shortcuts are disabled, don't handle any keyboard events
+      if (podPlayerConfig.disableKeyboardShortcuts) {
+        return;
+      }
+
       if (event.isKeyPressed(LogicalKeyboardKey.space)) {
         togglePlayPauseVideo();
         return;

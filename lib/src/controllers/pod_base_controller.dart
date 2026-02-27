@@ -34,6 +34,9 @@ class _PodBaseController extends GetxController {
   int doubleTapForwardSeconds = 10;
   String? playingVideoUrl;
 
+  /// The video view type (textureView or platformView)
+  VideoViewType _videoViewType = VideoViewType.textureView;
+
   late BuildContext mainContext;
   late BuildContext fullScreenContext;
 
@@ -44,7 +47,7 @@ class _PodBaseController extends GetxController {
       await _videoCtr!.initialize();
     }
     if (_videoCtr!.value.isInitialized) {
-      // _listneToVideoState();
+      _listenToVideoState();
       _listneToVideoPosition();
       _listneToVolume();
       if (kIsWeb && autoPlay && isMute && !_isWebAutoPlayDone) _webAutoPlay();
@@ -78,6 +81,34 @@ class _PodBaseController extends GetxController {
   //             : PodVideoState.paused,
   //   );
   // }
+  void _listenToVideoState() {
+    // Handle the uninitialized state
+    if (!_videoCtr!.value.isInitialized) {
+      podVideoStateChanger(PodVideoState.loading);
+      return;
+    }
+
+    // Handle the buffering state
+    if (!_videoCtr!.value.isPlaying && _videoCtr!.value.isBuffering) {
+      podVideoStateChanger(PodVideoState.loading);
+      return;
+    }
+
+    // Handle the playing and paused states
+    if (_videoCtr!.value.isPlaying) {
+      podVideoStateChanger(PodVideoState.playing);
+    } else {
+      // Ensure that the video is really paused
+      // It was observed that sometimes the "isPlaying" value comes as FALSE then immediately comes as TRUE
+      // If we update the Pod Video state to paused right away, the player UI enters in a play/pause loop
+      Future<void>.delayed(const Duration(milliseconds: 200)).then((value) {
+        // If after a small delay the video is still paused, then we update the Pod Video state
+        if (!_videoCtr!.value.isPlaying) {
+          podVideoStateChanger(PodVideoState.paused);
+        }
+      });
+    }
+  }
 
   ///updates state with id `_podVideoState`
   void podVideoStateChanger(PodVideoState? val, {bool updateUi = true}) {
@@ -96,8 +127,7 @@ class _PodBaseController extends GetxController {
       update(['video-progress']);
       update(['update-all']);
     } else {
-      if (_videoPosition.inSeconds !=
-          (_videoCtr?.value.position ?? Duration.zero).inSeconds) {
+      if (_videoPosition.inSeconds != (_videoCtr?.value.position ?? Duration.zero).inSeconds) {
         _videoPosition = _videoCtr?.value.position ?? Duration.zero;
         update(['video-progress']);
         update(['update-all']);

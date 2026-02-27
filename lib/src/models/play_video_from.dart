@@ -14,6 +14,7 @@ class PlayVideoFrom {
   final VideoPlayerOptions? videoPlayerOptions;
   final Map<String, String> httpHeaders;
   final bool live;
+  final VideoViewType? viewType;
 
   const PlayVideoFrom._({
     required this.playerType,
@@ -27,6 +28,7 @@ class PlayVideoFrom {
     this.closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const {},
+    this.viewType,
   });
 
   factory PlayVideoFrom.network(
@@ -35,6 +37,7 @@ class PlayVideoFrom {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
     Map<String, String> httpHeaders = const {},
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       playerType: PodVideoPlayerType.network,
@@ -43,6 +46,7 @@ class PlayVideoFrom {
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
       httpHeaders: httpHeaders,
+      viewType: viewType,
     );
   }
 
@@ -51,6 +55,7 @@ class PlayVideoFrom {
     String? package,
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       playerType: PodVideoPlayerType.asset,
@@ -58,6 +63,7 @@ class PlayVideoFrom {
       package: package,
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
+      viewType: viewType,
     );
   }
 
@@ -67,12 +73,14 @@ class PlayVideoFrom {
     File file, {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       file: file,
       playerType: PodVideoPlayerType.file,
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
+      viewType: viewType,
     );
   }
 
@@ -83,6 +91,7 @@ class PlayVideoFrom {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
     Map<String, String> httpHeaders = const {},
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       playerType: PodVideoPlayerType.vimeo,
@@ -92,6 +101,7 @@ class PlayVideoFrom {
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
       httpHeaders: httpHeaders,
+      viewType: viewType,
     );
   }
 
@@ -101,6 +111,7 @@ class PlayVideoFrom {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
     Map<String, String> httpHeaders = const {},
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       playerType: PodVideoPlayerType.vimeoPrivateVideos,
@@ -109,6 +120,7 @@ class PlayVideoFrom {
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
       httpHeaders: httpHeaders,
+      viewType: viewType,
     );
   }
   factory PlayVideoFrom.youtube(
@@ -118,6 +130,7 @@ class PlayVideoFrom {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
     Map<String, String> httpHeaders = const {},
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       live: live,
@@ -127,6 +140,7 @@ class PlayVideoFrom {
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
       httpHeaders: httpHeaders,
+      viewType: viewType,
     );
   }
   factory PlayVideoFrom.networkQualityUrls({
@@ -135,6 +149,7 @@ class PlayVideoFrom {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
     Map<String, String> httpHeaders = const {},
+    VideoViewType? viewType,
   }) {
     return PlayVideoFrom._(
       playerType: PodVideoPlayerType.networkQualityUrls,
@@ -143,6 +158,7 @@ class PlayVideoFrom {
       closedCaptionFile: closedCaptionFile,
       videoPlayerOptions: videoPlayerOptions,
       httpHeaders: httpHeaders,
+      viewType: viewType,
     );
   }
 }
